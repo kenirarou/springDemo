@@ -1,9 +1,11 @@
 package com.example.demo.config;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -15,10 +17,20 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtTokenProvider {
 
-    private final String jwtSecret = "VerySecretKey123456VerySecretKey123456"; // 32 文字以上推奨
-    private final long validityInMs = 3600000; // 一時間
+    // application.properties から読み込み
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
-    private final Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    @Value("${jwt.expiration-ms}")
+    private long validityInMs;
+	
+    private Key key;
+    
+    // @PostConstruct で初期化
+    @jakarta.annotation.PostConstruct
+    protected void init() {
+        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    }
     
     // 生成 token
     public String createToken(String username, List<String> roles) {
@@ -32,7 +44,7 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
-                .signWith(key, SignatureAlgorithm.HS256) // 新しい書き方
+                .signWith(key, SignatureAlgorithm.HS512) // 新しい書き方
                 .compact();
     }
 

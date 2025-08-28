@@ -9,6 +9,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,7 @@ import lombok.Setter;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "http://localhost:5173") 
 public class AuthController {
 
 	@Autowired
@@ -33,9 +36,12 @@ public class AuthController {
 
 	@Autowired
 	private AuthenticationManager authManager;
-
+	
 	@Autowired
 	private JwtTokenProvider tokenProvider;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginRequest req) {
@@ -54,7 +60,7 @@ public class AuthController {
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
 		// 简单演示
-		userService.register(req.getUsername(), req.getPassword(), req.getRoles());
+		userService.register(req.getUsername(), passwordEncoder.encode(req.getPassword()), req.getRoles());
 		return ResponseEntity.ok("Registered");
 	}
 }

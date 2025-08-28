@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:9090', // 后端地址
+    baseURL: 'http://localhost:8080', // 后端地址
     withCredentials: false
 });
 
@@ -15,10 +15,10 @@ api.interceptors.request.use(cfg => {
 });
 
 export const login = async (user) => {
-    const res = await api.post('/auth/login', user);
+    const res = await api.post('/demo/auth/login', user);
     return res.data;
 };
 
 export const register = async (user) => {
-    await api.post('/auth/register', user);
+    await api.post('/demo/auth/register', user);
 };

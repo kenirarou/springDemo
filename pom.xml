@@ -97,6 +97,13 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
+		<!-- ② 选用 H2（开发）或 MySQL（生产） -->
+		<!-- ③ Flyway（可选，自动执行DDL） -->
+		<dependency>
+    		<groupId>org.flywaydb</groupId>
+    		<artifactId>flyway-core</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
